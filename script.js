@@ -46,13 +46,11 @@ function renderFoodTable(foodData, filter = '') {
         .filter(([name]) => name.toLowerCase().includes(filter.toLowerCase()));
     foods.forEach(([name, protein]) => {
         const row = document.createElement('tr');
-        const checked = selectedFoods[name] ? 'checked' : '';
-        const consumed = selectedFoods[name]?.consumed || '';
+        const checked = selectedFoods[name]?.checked ? 'checked' : '';
         row.innerHTML = `
             <td><input type="checkbox" class="food-check" data-food="${name}" ${checked}></td>
             <td>${name}</td>
             <td>${protein}</td>
-            <td><input type="number" class="form-control form-control-sm food-amount" data-food="${name}" min="0" placeholder="g" value="${consumed}" ${checked ? '' : 'disabled'}></td>
         `;
         tbody.appendChild(row);
     });
@@ -61,24 +59,30 @@ function renderFoodTable(foodData, filter = '') {
 function renderSelectedFoods(foodData) {
     const container = document.getElementById('selectedFoodsList');
     container.innerHTML = '';
-    const selected = Object.entries(selectedFoods).filter(([_, v]) => v.checked && v.consumed > 0);
+    const selected = Object.entries(selectedFoods).filter(([_, v]) => v.checked);
     if (selected.length === 0) {
         container.innerHTML = '<div class="text-muted">No foods selected.</div>';
         return;
     }
     let totalProtein = 0;
-    const list = document.createElement('ul');
-    list.className = 'list-group';
+    const table = document.createElement('table');
+    table.className = 'table table-sm table-bordered align-middle';
+    table.innerHTML = `<thead><tr><th>Food</th><th>Consumed (g)</th><th>Protein (g)</th></tr></thead><tbody></tbody>`;
+    const tbody = table.querySelector('tbody');
     selected.forEach(([name, {consumed}]) => {
         const proteinPer100g = foodData[name];
-        const protein = ((proteinPer100g * consumed) / 100).toFixed(2);
-        totalProtein += parseFloat(protein);
-        const li = document.createElement('li');
-        li.className = 'list-group-item d-flex justify-content-between align-items-center';
-        li.innerHTML = `<span>${name} (${consumed}g)</span><span class="badge bg-primary">${protein}g</span>`;
-        list.appendChild(li);
+        const grams = parseFloat(consumed) || '';
+        const protein = grams ? ((proteinPer100g * grams) / 100).toFixed(2) : '0.00';
+        if (grams) totalProtein += parseFloat(protein);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${name}</td>
+            <td><input type="number" class="form-control form-control-sm selected-amount" data-food="${name}" min="0" placeholder="g" value="${grams}"></td>
+            <td class="selected-protein">${protein}</td>
+        `;
+        tbody.appendChild(tr);
     });
-    container.appendChild(list);
+    container.appendChild(table);
     const total = document.createElement('div');
     total.className = 'mt-3 fw-bold text-end';
     total.innerHTML = `Total protein: <span class="text-success">${totalProtein.toFixed(2)} g</span>`;
@@ -125,22 +129,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const food = this.getAttribute('data-food');
                 if (!selectedFoods[food]) selectedFoods[food] = {checked: false, consumed: ''};
                 selectedFoods[food].checked = this.checked;
-                // Enable/disable input
-                const input = document.querySelector(`.food-amount[data-food="${food}"]`);
-                if (input) input.disabled = !this.checked;
+                if (!this.checked) selectedFoods[food].consumed = '';
+                renderFoodTable(foodData, foodSearch.value);
+                attachFoodTableEvents(foodData);
                 renderSelectedFoods(foodData);
+                attachSelectedFoodsEvents(foodData);
             });
         });
-        document.querySelectorAll('.food-amount').forEach(inp => {
+    }
+
+    function attachSelectedFoodsEvents(foodData) {
+        document.querySelectorAll('.selected-amount').forEach(inp => {
             inp.addEventListener('input', function() {
                 const food = this.getAttribute('data-food');
-                if (!selectedFoods[food]) selectedFoods[food] = {checked: false, consumed: ''};
+                if (!selectedFoods[food]) selectedFoods[food] = {checked: true, consumed: ''};
                 selectedFoods[food].consumed = parseFloat(this.value) || '';
                 renderSelectedFoods(foodData);
+                attachSelectedFoodsEvents(foodData);
             });
         });
     }
 
     // Initial attach
     attachFoodTableEvents(foodData);
+    renderSelectedFoods(foodData);
+    attachSelectedFoodsEvents(foodData);
 });
