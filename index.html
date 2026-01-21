@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-layout">
+        <div class="container calculator">
+            <h1>Protein Calculator</h1>
+            <form id="proteinForm">
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" name="weight" required>
+                <label for="activity">Activity Level:</label>
+                <select id="activity" name="activity">
+                    <option value="sedentary">Sedentary</option>
+                    <option value="active">Active</option>
+                    <option value="athlete">Athlete</option>
+                </select>
+                <button type="submit">Calculate</button>
+            </form>
+            <div id="result"></div>
+        </div>
+        <div class="container food-list">
+            <h2>Food Protein Content</h2>
+            <input type="text" id="foodSearch" placeholder="Search food...">
+            <table id="foodTable">
+                <thead>
+                    <tr><th>Food</th><th>Protein (g/100g)</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
