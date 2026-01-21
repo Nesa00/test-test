@@ -85,7 +85,7 @@ function renderSelectedFoods(foodData) {
     container.appendChild(table);
     const total = document.createElement('div');
     total.className = 'mt-3 fw-bold text-end';
-    total.innerHTML = `Total protein: <span class="text-success">${totalProtein.toFixed(2)} g</span>`;
+    total.innerHTML = `Total protein: <span class="text-success" id="totalProteinAmount">${totalProtein.toFixed(2)} g</span>`;
     container.appendChild(total);
 }
 
@@ -104,14 +104,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         resultDiv.textContent = `Recommended protein intake: ${saved.result} g/day`;
     }
 
+    function updateSummary() {
+        const weight = parseFloat(weightInput.value) || '';
+        const activity = activitySelect.value;
+        let protein = '';
+        if (weight && config[activity]) {
+            protein = (weight * config[activity]).toFixed(1);
+        }
+        let summary = '';
+        summary += `<div><strong>Weight:</strong> ${weight ? weight + ' kg' : '-'}</div>`;
+        summary += `<div><strong>Activity:</strong> ${activity.charAt(0).toUpperCase() + activity.slice(1)}</div>`;
+        summary += `<div><strong>Daily Protein Requirement:</strong> <span class="text-primary">${protein ? protein + ' g/day' : '-'}</span></div>`;
+        resultDiv.innerHTML = summary;
+    }
+
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        updateSummary();
+        // Save to localStorage
         const weight = parseFloat(weightInput.value);
         const activity = activitySelect.value;
-        const protein = (weight * config[activity]).toFixed(1);
-        resultDiv.textContent = `Recommended protein intake: ${protein} g/day`;
+        const protein = (weight && config[activity]) ? (weight * config[activity]).toFixed(1) : '';
         saveToLocalStorage(weight, activity, protein);
     });
+
+    weightInput.addEventListener('input', updateSummary);
+    activitySelect.addEventListener('change', updateSummary);
 
     // Food list logic
     const foodData = await fetchAndStoreFoodData();
@@ -144,8 +162,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const food = this.getAttribute('data-food');
                 if (!selectedFoods[food]) selectedFoods[food] = {checked: true, consumed: ''};
                 selectedFoods[food].consumed = parseFloat(this.value) || '';
-                renderSelectedFoods(foodData);
-                attachSelectedFoodsEvents(foodData);
+                // Only update the protein cell and total, not the whole table
+                const proteinPer100g = foodData[food];
+                const grams = parseFloat(this.value) || 0;
+                const protein = grams ? ((proteinPer100g * grams) / 100).toFixed(2) : '0.00';
+                // Update protein cell
+                const proteinCell = this.parentElement.nextElementSibling;
+                if (proteinCell) proteinCell.textContent = protein;
+                // Update total
+                let totalProtein = 0;
+                Object.entries(selectedFoods).forEach(([name, {checked, consumed}]) => {
+                    if (checked && consumed) {
+                        totalProtein += (foodData[name] * consumed) / 100;
+                    }
+                });
+                const totalEl = document.getElementById('totalProteinAmount');
+                if (totalEl) totalEl.textContent = totalProtein.toFixed(2) + ' g';
             });
         });
     }
@@ -154,4 +186,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     attachFoodTableEvents(foodData);
     renderSelectedFoods(foodData);
     attachSelectedFoodsEvents(foodData);
+    updateSummary();
 });
