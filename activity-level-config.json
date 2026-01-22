@@ -1,0 +1,6 @@
+[
+  { "key": "sedentary", "label": "Sedentary", "description": "Little or no exercise", "value": 0.8 },
+  { "key": "active", "label": "Active", "description": "Moderate exercise/sports 3-5 days/week", "value": 1.2 },
+  { "key": "older_adult", "label": "Older Adult", "description": "Age 65+ or frail", "value": 1.2 },
+  { "key": "weight_loss", "label": "Weight Loss", "description": "Calorie deficit for fat loss", "value": 1.6 }
+]
