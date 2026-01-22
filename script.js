@@ -14,7 +14,6 @@ async function loadActivityLevelsConfig() {
             config[lvl.key || lvl.label.toLowerCase().replace(/[^a-z0-9]/g, '')] = parseFloat(lvl.value);
         });
     } catch (e) {
-        // fallback if config file missing
         activityLevelsConfig = [
             { value: '0.8', label: 'Sedentary', key: 'sedentary' },
             { value: '1.2', label: 'Active', key: 'active' },
@@ -45,228 +44,256 @@ function loadFoodDataFromLocalStorage() {
     return data ? JSON.parse(data) : null;
 }
 
-// Load food data from protein_config.json (only first time)
-async function fetchAndStoreFoodData() {
-    // Try to load from localStorage first
-    let foodData = loadFoodDataFromLocalStorage();
-    if (!foodData) {
-        try {
-            const resp = await fetch('protein-config.json');
-            if (!resp.ok) throw new Error('Failed to load protein-config.json');
-            foodData = await resp.json();
-            saveFoodDataToLocalStorage(foodData);
-        } catch (e) {
-            foodData = {};
-        }
-    }
-    return foodData;
+// --- Refactored: script2.js logic, but loads config from JSON ---
+let foodList = [];
+let activityLevels = [];
+let selectedFoods = [];
+
+async function loadConfigs() {
+    // Load foods
+    const foodResp = await fetch('protein-config.json');
+    const foodObj = await foodResp.json();
+    foodList = Object.entries(foodObj).map(([name, protein]) => ({ name, protein: parseFloat(protein) }));
+    // Load activity levels
+    const actResp = await fetch('activity-level-config.json');
+    activityLevels = await actResp.json();
 }
 
-let selectedFoods = {};
-function renderFoodTable(foodData, filter = '') {
-    const tbody = document.querySelector('#foodTable tbody');
+function saveToLocalStorage() {
+    localStorage.setItem('protein_selectedFoods', JSON.stringify(selectedFoods));
+    const weightInput = document.getElementById('weight');
+    if (weightInput) localStorage.setItem('protein_weight', weightInput.value);
+    const activitySel = document.getElementById('activity');
+    if (activitySel) localStorage.setItem('protein_activity', activitySel.value);
+}
+
+function loadFromLocalStorage() {
+    // Foods
+    const foods = localStorage.getItem('protein_selectedFoods');
+    if (foods) {
+        try { selectedFoods = JSON.parse(foods); } catch {}
+    }
+    // Weight
+    const weightInput = document.getElementById('weight');
+    const w = localStorage.getItem('protein_weight');
+    if (weightInput && w !== null) weightInput.value = w;
+    // Activity
+    const activitySel = document.getElementById('activity');
+    const a = localStorage.getItem('protein_activity');
+    if (activitySel && a !== null) activitySel.value = a;
+}
+
+function renderActivityDropdownAndList() {
+    const activitySel = document.getElementById('activity');
+    if (activitySel) {
+        activitySel.innerHTML = '';
+        activityLevels.forEach((lvl, i) => {
+            const opt = document.createElement('option');
+            opt.value = lvl.value;
+            opt.textContent = lvl.label;
+            activitySel.appendChild(opt);
+        });
+    }
+    const listContainer = document.getElementById('activity-list-container');
+    if (listContainer) {
+        let ul = document.createElement('ul');
+        ul.className = 'list-group list-group-flush mt-1';
+        ul.style.fontSize = '0.78em';
+        ul.style.maxWidth = '220px';
+        ul.style.lineHeight = '1.1';
+        activityLevels.forEach(lvl => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item px-1 py-0 border-0';
+            li.innerHTML = `<b>${lvl.label}</b>: ${lvl.description || lvl.desc || ''} ${lvl.value ? `(×${lvl.value}g/kg)` : ''}`;
+            ul.appendChild(li);
+        });
+        listContainer.innerHTML = '';
+        listContainer.appendChild(ul);
+    }
+}
+
+function getActivityMultiplier() {
+    const activitySel = document.getElementById('activity');
+    if (!activitySel) return 0.8;
+    return parseFloat(activitySel.value) || 0.8;
+}
+
+function getWeight() {
+    const weightInput = document.getElementById('weight');
+    if (!weightInput) return 70;
+    const val = parseFloat(weightInput.value);
+    return isNaN(val) ? 70 : val;
+}
+
+function calculateRequiredProtein() {
+    const weight = getWeight();
+    const factor = getActivityMultiplier();
+    return (weight * factor).toFixed(2);
+}
+
+function updateRequiredProteinLabel() {
+    const reqLabel = document.getElementById('required-protein-badge');
+    if (reqLabel) {
+        reqLabel.textContent = calculateRequiredProtein() + ' g/day';
+    }
+}
+
+function populateFoodList() {
+    const tbody = document.querySelector('#foodTable2 tbody');
+    if (!tbody) return;
     tbody.innerHTML = '';
-    const foods = Object.entries(foodData)
-        .filter(([name]) => name.toLowerCase().includes(filter.toLowerCase()));
-    foods.forEach(([name, protein]) => {
-        const row = document.createElement('tr');
-        const checked = selectedFoods[name]?.checked ? 'checked' : '';
-        row.innerHTML = `
-            <td><input type="checkbox" class="food-check" data-food="${name}" ${checked}></td>
-            <td>${name}</td>
-            <td>${protein}</td>
-        `;
-        tbody.appendChild(row);
+    // Get filter value
+    const searchInput = document.getElementById('foodSearch2');
+    const filter = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    foodList.forEach((food, i) => {
+        if (!filter || food.name.toLowerCase().includes(filter)) {
+            const isSelected = selectedFoods.some(f => f.name === food.name);
+            const tr = document.createElement('tr');
+            tr.className = isSelected ? 'table-primary food-row' : 'food-row';
+            tr.style.cursor = 'pointer';
+            tr.innerHTML = `
+                <td>${food.name}</td>
+                <td>${food.protein}</td>
+            `;
+            tr.addEventListener('click', function() {
+                const alreadySelected = selectedFoods.some(f => f.name === food.name);
+                if (!alreadySelected) {
+                    selectedFoods.push({
+                        name: food.name,
+                        consumed: 100,
+                        protein: (food.protein).toFixed(2)
+                    });
+                } else {
+                    selectedFoods = selectedFoods.filter(f => f.name !== food.name);
+                }
+                saveToLocalStorage();
+                populateFoodList();
+                populateSelectedFoods();
+            });
+            tbody.appendChild(tr);
+        }
     });
 }
 
-function renderSelectedFoods(foodData) {
-    const container = document.getElementById('selectedFoodsList');
-    container.innerHTML = '';
-    const selected = Object.entries(selectedFoods).filter(([_, v]) => v.checked);
-    if (selected.length === 0) {
-        container.innerHTML = '<div class="text-muted">No foods selected.</div>';
-        return;
-    }
+function populateSelectedFoods() {
+    const tbody = document.querySelector('#selectedFoodsTable2 tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
     let totalProtein = 0;
-    const table = document.createElement('table');
-    table.className = 'table table-sm table-bordered align-middle';
-    table.innerHTML = `<thead><tr><th>Food</th><th>Consumed (g)</th><th>Protein (g)</th></tr></thead><tbody></tbody>`;
-    const tbody = table.querySelector('tbody');
-    selected.forEach(([name, {consumed}]) => {
-        const proteinPer100g = foodData[name];
-        const grams = parseFloat(consumed) || '';
-        const protein = grams ? ((proteinPer100g * grams) / 100).toFixed(2) : '0.00';
-        if (grams) totalProtein += parseFloat(protein);
+    selectedFoods.forEach((food, i) => {
+        totalProtein += parseFloat(food.protein) || 0;
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${name}</td>
-            <td><input type="number" class="form-control form-control-sm selected-amount" data-food="${name}" min="0" placeholder="g" value="${grams}"></td>
-            <td class="selected-protein">${protein}</td>
+            <td>${food.name}</td>
+            <td><input type="number" class="form-control form-control-sm" value="${food.consumed}" data-index="${i}"></td>
+            <td class="selected-protein">${food.protein}</td>
+            <td><button type="button" class="btn btn-sm btn-outline-danger" data-index="${i}">✕</button></td>
         `;
         tbody.appendChild(tr);
     });
-    container.appendChild(table);
-    const total = document.createElement('div');
-    total.className = 'mt-3 fw-bold text-end';
-    total.innerHTML = `Total protein: <span class="text-success" id="totalProteinAmount">${totalProtein.toFixed(2)} g</span>`;
-    container.appendChild(total);
+    // Add event listeners for remove buttons
+    tbody.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const idx = parseInt(this.getAttribute('data-index'));
+            selectedFoods.splice(idx, 1);
+            saveToLocalStorage();
+            populateFoodList();
+            populateSelectedFoods();
+        });
+    });
+    // Add event listeners for consumed input
+    tbody.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', function() {
+            const idx = parseInt(this.getAttribute('data-index'));
+            let val = parseFloat(this.value);
+            if (isNaN(val) || val < 0) val = 0;
+            selectedFoods[idx].consumed = val;
+            // Update protein value
+            const baseProtein = foodList.find(f => f.name === selectedFoods[idx].name).protein;
+            selectedFoods[idx].protein = ((val * baseProtein) / 100).toFixed(2);
+            // Only update the protein cell and total, not the whole table
+            this.closest('tr').querySelector('.selected-protein').textContent = selectedFoods[idx].protein;
+            // Update total protein display (bottom)
+            let totalProtein = 0;
+            selectedFoods.forEach(f => { totalProtein += parseFloat(f.protein) || 0; });
+            const totalProteinSpan = document.querySelector('.mt-3.fw-bold.text-end .text-success');
+            if (totalProteinSpan) {
+                totalProteinSpan.textContent = totalProtein.toFixed(2) + ' g';
+            }
+            // Update consumed protein label in summary card (top) and badge color
+            const consumedBadge = document.getElementById('consumed-protein-badge');
+            const requiredBadge = document.getElementById('required-protein-badge');
+            let requiredProteinValue = 0;
+            if (requiredBadge) {
+                // Extract the numeric value from the required badge (e.g., '90.00 g/day')
+                const match = requiredBadge.textContent.match(/([\d.]+)/);
+                if (match) requiredProteinValue = parseFloat(match[1]);
+            }
+            if (consumedBadge) {
+                consumedBadge.textContent = totalProtein.toFixed(2) + ' g/day';
+                // Change badge color: yellow if below goal, green if met/exceeded
+                if (totalProtein >= requiredProteinValue && requiredProteinValue > 0) {
+                    consumedBadge.classList.remove('bg-warning');
+                    consumedBadge.classList.add('bg-success');
+                } else {
+                    consumedBadge.classList.remove('bg-success');
+                    consumedBadge.classList.add('bg-warning');
+                }
+            }
+            saveToLocalStorage();
+        });
+    });
+    // Update total protein display (bottom)
+    const totalProteinSpan = document.querySelector('.mt-3.fw-bold.text-end .text-success');
+    if (totalProteinSpan) {
+        totalProteinSpan.textContent = totalProtein.toFixed(2) + ' g';
+    }
+    // Update consumed protein label in summary card (top) and badge color
+    const consumedBadge = document.getElementById('consumed-protein-badge');
+    const requiredBadge = document.getElementById('required-protein-badge');
+    let requiredProteinValue = 0;
+    if (requiredBadge) {
+        const match = requiredBadge.textContent.match(/([\d.]+)/);
+        if (match) requiredProteinValue = parseFloat(match[1]);
+    }
+    if (consumedBadge) {
+        consumedBadge.textContent = totalProtein.toFixed(2) + ' g/day';
+        if (totalProtein >= requiredProteinValue && requiredProteinValue > 0) {
+            consumedBadge.classList.remove('bg-warning');
+            consumedBadge.classList.add('bg-success');
+        } else {
+            consumedBadge.classList.remove('bg-success');
+            consumedBadge.classList.add('bg-warning');
+        }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-
-    await loadActivityLevelsConfig();
-
-    const form = document.getElementById('proteinForm');
-    const resultDiv = document.getElementById('result');
+    await loadConfigs();
+    renderActivityDropdownAndList();
+    loadFromLocalStorage();
+    populateFoodList();
+    // Add search-as-you-type for food
+    const searchInput = document.getElementById('foodSearch2');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            populateFoodList();
+        });
+    }
+    updateRequiredProteinLabel();
+    populateSelectedFoods();
+    // Update required protein and save to localStorage when weight or activity changes
     const weightInput = document.getElementById('weight');
-    const activitySelect = document.getElementById('activity');
-    const foodSearch = document.getElementById('foodSearch');
-
-    // Populate activity select from config
-    if (activityLevelsConfig && activitySelect) {
-      activitySelect.innerHTML = '';
-      activityLevelsConfig.forEach(lvl => {
-        const opt = document.createElement('option');
-        opt.value = lvl.key;
-        opt.textContent = lvl.label;
-        activitySelect.appendChild(opt);
-      });
-    }
-
-    // Load previous data
-    const saved = loadFromLocalStorage();
-    if (saved) {
-        weightInput.value = saved.weight;
-        activitySelect.value = saved.activity;
-        resultDiv.textContent = `Recommended protein intake: ${saved.result} g/day`;
-    }
-
-    function updateSummary() {
-        const weight = parseFloat(weightInput.value) || '';
-        const activity = activitySelect.value;
-        let protein = '';
-        if (weight && config[activity]) {
-            protein = (weight * config[activity]).toFixed(1);
-        }
-        let summary = '';
-        summary += `<div><strong>Weight:</strong> ${weight ? weight + ' kg' : '-'}</div>`;
-        summary += `<div><strong>Activity:</strong> ${activity.charAt(0).toUpperCase() + activity.slice(1)}</div>`;
-        summary += `<div><strong>Daily Protein Requirement:</strong> <span class="text-primary">${protein ? protein + ' g/day' : '-'}</span></div>`;
-        resultDiv.innerHTML = summary;
-
-        // Calculate total consumed protein
-        let totalProtein = 0;
-        Object.entries(selectedFoods).forEach(([name, {checked, consumed}]) => {
-            if (checked && consumed) {
-                totalProtein += (window.foodData ? window.foodData[name] : 0) * consumed / 100;
-            }
-        });
-        let statusColor = 'bg-danger';
-        if (protein) {
-            const percent = totalProtein / protein;
-            if (percent < 0.8) statusColor = 'bg-danger';
-            else if (percent < 1.0) statusColor = 'bg-warning';
-            else statusColor = 'bg-success';
-        }
-        const statusDiv = document.getElementById('proteinStatus');
-        statusDiv.innerHTML = `<span class="badge ${statusColor} fs-5">Total protein - consumed: ${totalProtein.toFixed(2)} g / day</span>`;
-    }
-
-    // Remove calculate button logic
-    weightInput.addEventListener('input', function() {
-        updateSummary();
-        const weight = parseFloat(weightInput.value);
-        const activity = activitySelect.value;
-        const protein = (weight && config[activity]) ? (weight * config[activity]).toFixed(1) : '';
-        saveToLocalStorage(weight, activity, protein);
+    const activitySel = document.getElementById('activity');
+    if (weightInput) weightInput.addEventListener('input', function() {
+        updateRequiredProteinLabel();
+        populateSelectedFoods();
+        saveToLocalStorage();
     });
-    activitySelect.addEventListener('change', function() {
-        updateSummary();
-        const weight = parseFloat(weightInput.value);
-        const activity = activitySelect.value;
-        const protein = (weight && config[activity]) ? (weight * config[activity]).toFixed(1) : '';
-        saveToLocalStorage(weight, activity, protein);
+    if (activitySel) activitySel.addEventListener('change', function() {
+        updateRequiredProteinLabel();
+        populateSelectedFoods();
+        saveToLocalStorage();
     });
-
-    // Food list logic
-    const foodData = await fetchAndStoreFoodData();
-    renderFoodTable(foodData);
-    renderSelectedFoods(foodData);
-
-    foodSearch.addEventListener('input', function() {
-        renderFoodTable(foodData, foodSearch.value);
-        attachFoodTableEvents(foodData);
-    });
-
-    function attachFoodTableEvents(foodData) {
-        document.querySelectorAll('.food-check').forEach(cb => {
-            cb.addEventListener('change', function() {
-                const food = this.getAttribute('data-food');
-                if (!selectedFoods[food]) selectedFoods[food] = {checked: false, consumed: ''};
-                selectedFoods[food].checked = this.checked;
-                if (!this.checked) selectedFoods[food].consumed = '';
-                renderFoodTable(foodData, foodSearch.value);
-                attachFoodTableEvents(foodData);
-                renderSelectedFoods(foodData);
-                attachSelectedFoodsEvents(foodData);
-                updateSummary();
-            });
-        });
-    }
-
-    function attachSelectedFoodsEvents(foodData) {
-        document.querySelectorAll('.selected-amount').forEach(inp => {
-            inp.addEventListener('input', function() {
-                const food = this.getAttribute('data-food');
-                if (!selectedFoods[food]) selectedFoods[food] = {checked: true, consumed: ''};
-                selectedFoods[food].consumed = parseFloat(this.value) || '';
-                // Only update the protein cell and total, not the whole table
-                const proteinPer100g = foodData[food];
-                const grams = parseFloat(this.value) || 0;
-                const protein = grams ? ((proteinPer100g * grams) / 100).toFixed(2) : '0.00';
-                // Update protein cell
-                const proteinCell = this.parentElement.nextElementSibling;
-                if (proteinCell) proteinCell.textContent = protein;
-                // Update total
-                let totalProtein = 0;
-                Object.entries(selectedFoods).forEach(([name, {checked, consumed}]) => {
-                    if (checked && consumed) {
-                        totalProtein += (foodData[name] * consumed) / 100;
-                    }
-                });
-                const totalEl = document.getElementById('totalProteinAmount');
-                if (totalEl) totalEl.textContent = totalProtein.toFixed(2) + ' g';
-                updateSummary();
-            });
-        });
-        // Synchronize checkboxes: add remove button for each selected food
-        document.querySelectorAll('.selected-amount').forEach(inp => {
-            const food = inp.getAttribute('data-food');
-            if (!inp.parentElement.previousElementSibling.querySelector('.remove-food')) {
-                const removeBtn = document.createElement('button');
-                removeBtn.type = 'button';
-                removeBtn.className = 'btn btn-sm btn-outline-danger ms-2 remove-food';
-                removeBtn.innerHTML = '✕';
-                removeBtn.onclick = function() {
-                    selectedFoods[food].checked = false;
-                    selectedFoods[food].consumed = '';
-                    renderFoodTable(foodData, foodSearch.value);
-                    attachFoodTableEvents(foodData);
-                    renderSelectedFoods(foodData);
-                    attachSelectedFoodsEvents(foodData);
-                    updateSummary();
-                };
-                inp.parentElement.previousElementSibling.appendChild(removeBtn);
-            }
-        });
-    }
-
-    // Make foodData globally accessible for summary
-    window.foodData = foodData;
-    // Initial attach
-    attachFoodTableEvents(foodData);
-    renderSelectedFoods(foodData);
-    attachSelectedFoodsEvents(foodData);
-    updateSummary();
 });
+                    renderSelectedFoods(foodData);

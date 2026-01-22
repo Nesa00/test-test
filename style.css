@@ -1,3 +1,150 @@
 body {
     background: #f4f4f4;
 }
+  /* Sticky header for all tables */
+        #foodTable2-scrollable, #selectedFoodsTable2-scrollable {
+            max-height: 340px;
+            overflow-y: auto;
+        }
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            background: linear-gradient(90deg, #818cf8 0%, #60a5fa 100%) !important;
+            color: #fff !important;
+        }
+        /* Modern table styling */
+        .table th {
+            border: none !important;
+            font-weight: 600;
+            font-size: 1em;
+            box-shadow: 0 2px 8px 0 rgba(96,165,250,0.07);
+            padding: 0.35em 0.7em !important;
+        }
+            .table td {
+                border: none !important;
+                background: rgba(255,255,255,0.97);
+                padding: 0.35em 0.7em !important;
+                box-shadow: 0 1px 6px 0 rgba(96,165,250,0.06);
+            }
+        /* Rounded row effect: only first and last cell in row get border-radius */
+        .table tr > td:first-child {
+            border-top-left-radius: 1.1em !important;
+            border-bottom-left-radius: 1.1em !important;
+        }
+        .table tr > td:last-child {
+            border-top-right-radius: 1.1em !important;
+            border-bottom-right-radius: 1.1em !important;
+        }
+        .table-sm td, .table-sm th {
+              padding: 0.25em 0.5em !important;
+        }
+        .table-hover tbody tr:hover td {
+            background: linear-gradient(90deg, #e0e7ff 0%, #c7d2fe 100%) !important;
+            color: #3b3b6d !important;
+        }
+        .table-primary, .food-row.table-primary td {
+              background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%) !important;
+              color: #fff !important;
+        }
+        #foodTable2-scrollable, #selectedFoodsTable2 {
+            border-radius: 1.1em;
+            overflow: hidden;
+        }
+        /* Glassmorphism for activity-list-container */
+        #activity-list-container {
+            background: rgba(255,255,255,0.55) !important;
+            box-shadow: 0 4px 24px 0 rgba(80, 80, 160, 0.08);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border-radius: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 0.5rem 0.75rem;
+        }
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            min-height: 100vh;
+        }
+        .card {
+            border-radius: 1.2rem;
+            box-shadow: 0 4px 24px 0 rgba(80, 80, 160, 0.08);
+            border: none;
+        }
+        .card-title, .fw-bold {
+            color: #3b3b6d;
+        }
+        /* Modern glassmorphism and readable gradients */
+        .badge.bg-info, .badge.bg-required {
+            background: linear-gradient(90deg, #60a5fa 0%, #818cf8 100%) !important;
+            color: #fff !important;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px 0 rgba(96,165,250,0.10);
+            backdrop-filter: blur(4px) saturate(180%);
+        }
+        .badge.bg-warning, .badge.bg-consumed {
+            background: linear-gradient(90deg, #f472b6 0%, #a78bfa 100%) !important;
+            color: #fff !important;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px 0 rgba(244,114,182,0.10);
+            backdrop-filter: blur(4px) saturate(180%);
+        }
+        .badge.bg-success {
+            background: linear-gradient(90deg, #34d399 0%, #60a5fa 100%) !important;
+            color: #fff !important;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px 0 rgba(52,211,153,0.10);
+            backdrop-filter: blur(4px) saturate(180%);
+        }
+        /* Glassmorphism for cards */
+        .card {
+            background: rgba(255,255,255,0.55) !important;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border-radius: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.18);
+        }
+        .input-group, .form-control, .form-select {
+            background: rgba(255,255,255,0.7) !important;
+            backdrop-filter: blur(8px) saturate(180%);
+            -webkit-backdrop-filter: blur(8px) saturate(180%);
+        }
+        .list-group-item {
+            background: rgba(255,255,255,0.6) !important;
+            backdrop-filter: blur(6px) saturate(180%);
+            -webkit-backdrop-filter: blur(6px) saturate(180%);
+        }
+        .table-primary {
+            background: linear-gradient(90deg, #e0e7ff 0%, #c7d2fe 100%) !important;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.15);
+        }
+        .btn-outline-danger {
+            border-radius: 0.7em;
+        }
+        .list-group-item {
+            background: rgba(255,255,255,0.7);
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        /* Weight and activity controls styling */
+        .input-group-text {
+            background: #f1f5f9;
+            border: none;
+            color: #6366f1;
+            font-weight: bold;
+        }
+        .input-group .form-control, .input-group .form-select {
+            border-left: none;
+        }
+        .input-group .form-control:focus, .input-group .form-select:focus {
+            box-shadow: none;
+        }
+        #foodTable2-scrollable table,
+#selectedFoodsTable2-scrollable table {
+    border-collapse: separate !important;
+    border-spacing: 0 0.35em !important;
+}
