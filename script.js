@@ -1,9 +1,31 @@
-// Protein calculator logic and local storage
-const config = {
-    sedentary: 0.8,
-    active: 1.2,
-    athlete: 1.6
-};
+
+// Load activity levels config from JSON file
+let activityLevelsConfig = null;
+let config = {};
+
+async function loadActivityLevelsConfig() {
+    try {
+        const resp = await fetch('activity-level-config.json');
+        if (!resp.ok) throw new Error('Failed to load activity-level-config.json');
+        const arr = await resp.json();
+        activityLevelsConfig = arr;
+        config = {};
+        arr.forEach(lvl => {
+            config[lvl.key || lvl.label.toLowerCase().replace(/[^a-z0-9]/g, '')] = parseFloat(lvl.value);
+        });
+    } catch (e) {
+        // fallback if config file missing
+        activityLevelsConfig = [
+            { value: '0.8', label: 'Sedentary', key: 'sedentary' },
+            { value: '1.2', label: 'Active', key: 'active' },
+            { value: '1.6', label: 'Athlete', key: 'athlete' }
+        ];
+        config = {};
+        activityLevelsConfig.forEach(lvl => {
+            config[lvl.key || lvl.label.toLowerCase().replace(/[^a-z0-9]/g, '')] = parseFloat(lvl.value);
+        });
+    }
+}
 
 function saveToLocalStorage(weight, activity, result) {
     localStorage.setItem('proteinData', JSON.stringify({ weight, activity, result }));
@@ -25,11 +47,13 @@ function loadFoodDataFromLocalStorage() {
 
 // Load food data from protein_config.json (only first time)
 async function fetchAndStoreFoodData() {
+    // Try to load from localStorage first
     let foodData = loadFoodDataFromLocalStorage();
     if (!foodData) {
         try {
-            const response = await fetch('protein_config.json');
-            foodData = await response.json();
+            const resp = await fetch('protein-config.json');
+            if (!resp.ok) throw new Error('Failed to load protein-config.json');
+            foodData = await resp.json();
             saveFoodDataToLocalStorage(foodData);
         } catch (e) {
             foodData = {};
@@ -90,11 +114,25 @@ function renderSelectedFoods(foodData) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+    await loadActivityLevelsConfig();
+
     const form = document.getElementById('proteinForm');
     const resultDiv = document.getElementById('result');
     const weightInput = document.getElementById('weight');
     const activitySelect = document.getElementById('activity');
     const foodSearch = document.getElementById('foodSearch');
+
+    // Populate activity select from config
+    if (activityLevelsConfig && activitySelect) {
+      activitySelect.innerHTML = '';
+      activityLevelsConfig.forEach(lvl => {
+        const opt = document.createElement('option');
+        opt.value = lvl.key;
+        opt.textContent = lvl.label;
+        activitySelect.appendChild(opt);
+      });
+    }
 
     // Load previous data
     const saved = loadFromLocalStorage();

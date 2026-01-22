@@ -3,107 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protein Calculator Vision</title>
-    <!-- Bootstrap CSS -->
+    <title>Protein Calculator Vision (Static Demo)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="protein-config.js"></script>
+    <script src="activity-level-config.js"></script>
 </head>
 <body>
-    <div class="container py-4">
-        <!-- Top summary/info card -->
-        <div class="row justify-content-center mb-4">
-            <div class="col-12 col-lg-10">
-                <div class="card shadow-sm">
-                    <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between">
-                        <div class="d-flex flex-wrap gap-3 mb-3 align-items-end justify-content-between">
-                            <div class="d-flex flex-column align-items-start">
-                                <label for="weight" class="form-label mb-1">Weight (kg):</label>
-                                <input type="number" id="weight" class="form-control form-control-sm" style="width:70px;" value="75">
-                            </div>
-                            <div class="d-flex flex-column align-items-start">
-                                <label for="height" class="form-label mb-1">Height (cm):</label>
-                                <input type="number" id="height" class="form-control form-control-sm" style="width:70px;" value="180">
-                            </div>
-                            <div class="d-flex flex-column align-items-start">
-                                <label for="sex" class="form-label mb-1">Sex:</label>
-                                <select id="sex" class="form-select form-select-sm" style="width:90px;">
-                                    <option>Male</option>
-                                    <option>Female</option>
-                                </select>
-                            </div>
-                            <div class="d-flex flex-column align-items-start">
-                                <label for="age" class="form-label mb-1">Age:</label>
-                                <input type="number" id="age" class="form-control form-control-sm" style="width:70px;" value="30">
-                            </div>
-                            <div class="d-flex flex-column align-items-start">
-                                <label for="activity" class="form-label mb-1">Activity Level:</label>
-                                <select id="activity" class="form-select form-select-sm" style="width:120px;">
-                                    <option>Sedentary</option>
-                                    <option selected>Active</option>
-                                    <option>Athlete</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-12 col-md-6 mb-2 mb-md-0">
-                                <div class="fw-bold">Required protein: <span class="text-primary">90 g/day</span></div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <div class="fw-bold">Consumed protein: <span class="badge bg-warning">45 g/day</span></div>
+        <div class="container py-4">
+            <div class="row justify-content-center mb-4">
+                <div class="col-12 col-lg-10">
+                    <div class="card shadow-sm">
+                        <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+                            <div class="d-flex flex-row w-100 align-items-start justify-content-between mb-3 gap-4">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex flex-row gap-4 mb-2 align-items-end">
+                                        <div class="d-flex flex-column align-items-start">
+                                            <label for="weight" class="form-label mb-1">Weight (kg):</label>
+                                            <input type="number" id="weight" class="form-control form-control-sm" style="width:70px;" value="75">
+                                        </div>
+                                        <div class="d-flex flex-column align-items-start">
+                                            <label for="activity" class="form-label mb-1">Activity Level:</label>
+                                            <select id="activity" class="form-select form-select-sm" style="width:140px;"></select>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column gap-1 mb-2 align-items-start">
+                                        <table class="table table-borderless mb-0" style="width:auto;">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="fw-bold text-start py-1 pe-1" style="white-space:nowrap;">Required protein:</td>
+                                                    <td class="py-1 ps-1"><span class="badge bg-info text-dark" id="required-protein-badge"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold text-start py-1 pe-1" style="white-space:nowrap;">Consumed protein:</td>
+                                                    <td class="py-1 ps-1"><span class="badge bg-warning" id="consumed-protein-badge"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="min-width:220px;max-width:260px;">
+                                    <div id="activity-list-container" class="w-100"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Two columns: left food list, right selected foods -->
-        <div class="row justify-content-center" style="max-width: 1100px; margin: auto;">
-            <div class="col-12 col-md-6 mb-4 mb-md-0">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h2 class="card-title text-center mb-3">Food List</h2>
-                        <input type="text" class="form-control mb-3" placeholder="Search food...">
-                        <div class="table-responsive">
-                            <div style="max-height:350px; overflow:auto;">
-                                <table class="table table-bordered table-hover align-middle mb-0">
+            <div class="row justify-content-center" style="max-width: 1100px; margin: auto;">
+                <div class="col-12 col-md-6 mb-4 mb-md-0">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h2 class="card-title text-center mb-3">Food List</h2>
+                            <input type="text" id="foodSearch2" class="form-control mb-3" placeholder="Search food...">
+                            <div class="table-responsive">
+                                <table id="foodTable2" class="table table-bordered table-hover align-middle mb-0">
                                     <thead class="table-light">
                                         <tr>
-                                            <th scope="col">Select</th>
                                             <th scope="col">Food</th>
                                             <th scope="col">Protein (g/100g)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h3 class="card-title mb-3">Selected Foods & Consumed Amount</h3>
-                        <div style="max-height:350px; overflow:auto;">
-                            <table class="table table-sm table-bordered align-middle mb-0">
-                                <thead>
-                                    <tr><th>Food</th><th>Consumed (g)</th><th>Protein (g)</th><th></th></tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="mt-3 fw-bold text-end">
-                            Total protein: <span class="text-success">45.0 g</span>
+                <div class="col-12 col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h3 class="card-title mb-3">Selected Foods & Consumed Amount</h3>
+                            <div style="max-height:350px; overflow:auto;">
+                                <table id="selectedFoodsTable2" class="table table-sm table-bordered align-middle mb-0">
+                                    <thead>
+                                        <tr><th>Food</th><th>Consumed (g)</th><th>Protein (g)</th><th></th></tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-3 fw-bold text-end">
+                                Total protein: <span class="text-success">45.0 g</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
