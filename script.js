@@ -116,20 +116,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         summary += `<div><strong>Activity:</strong> ${activity.charAt(0).toUpperCase() + activity.slice(1)}</div>`;
         summary += `<div><strong>Daily Protein Requirement:</strong> <span class="text-primary">${protein ? protein + ' g/day' : '-'}</span></div>`;
         resultDiv.innerHTML = summary;
+
+        // Calculate total consumed protein
+        let totalProtein = 0;
+        Object.entries(selectedFoods).forEach(([name, {checked, consumed}]) => {
+            if (checked && consumed) {
+                totalProtein += (window.foodData ? window.foodData[name] : 0) * consumed / 100;
+            }
+        });
+        let statusColor = 'bg-danger';
+        if (protein) {
+            const percent = totalProtein / protein;
+            if (percent < 0.8) statusColor = 'bg-danger';
+            else if (percent < 1.0) statusColor = 'bg-warning';
+            else statusColor = 'bg-success';
+        }
+        const statusDiv = document.getElementById('proteinStatus');
+        statusDiv.innerHTML = `<span class="badge ${statusColor} fs-5">Total protein - consumed: ${totalProtein.toFixed(2)} g / day</span>`;
     }
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Remove calculate button logic
+    weightInput.addEventListener('input', function() {
         updateSummary();
-        // Save to localStorage
         const weight = parseFloat(weightInput.value);
         const activity = activitySelect.value;
         const protein = (weight && config[activity]) ? (weight * config[activity]).toFixed(1) : '';
         saveToLocalStorage(weight, activity, protein);
     });
-
-    weightInput.addEventListener('input', updateSummary);
-    activitySelect.addEventListener('change', updateSummary);
+    activitySelect.addEventListener('change', function() {
+        updateSummary();
+        const weight = parseFloat(weightInput.value);
+        const activity = activitySelect.value;
+        const protein = (weight && config[activity]) ? (weight * config[activity]).toFixed(1) : '';
+        saveToLocalStorage(weight, activity, protein);
+    });
 
     // Food list logic
     const foodData = await fetchAndStoreFoodData();
@@ -152,6 +172,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 attachFoodTableEvents(foodData);
                 renderSelectedFoods(foodData);
                 attachSelectedFoodsEvents(foodData);
+                updateSummary();
             });
         });
     }
@@ -178,10 +199,33 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
                 const totalEl = document.getElementById('totalProteinAmount');
                 if (totalEl) totalEl.textContent = totalProtein.toFixed(2) + ' g';
+                updateSummary();
             });
+        });
+        // Synchronize checkboxes: add remove button for each selected food
+        document.querySelectorAll('.selected-amount').forEach(inp => {
+            const food = inp.getAttribute('data-food');
+            if (!inp.parentElement.previousElementSibling.querySelector('.remove-food')) {
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-sm btn-outline-danger ms-2 remove-food';
+                removeBtn.innerHTML = '✕';
+                removeBtn.onclick = function() {
+                    selectedFoods[food].checked = false;
+                    selectedFoods[food].consumed = '';
+                    renderFoodTable(foodData, foodSearch.value);
+                    attachFoodTableEvents(foodData);
+                    renderSelectedFoods(foodData);
+                    attachSelectedFoodsEvents(foodData);
+                    updateSummary();
+                };
+                inp.parentElement.previousElementSibling.appendChild(removeBtn);
+            }
         });
     }
 
+    // Make foodData globally accessible for summary
+    window.foodData = foodData;
     // Initial attach
     attachFoodTableEvents(foodData);
     renderSelectedFoods(foodData);
