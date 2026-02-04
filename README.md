@@ -29,12 +29,6 @@
 
 ---
 
-**Example screenshot (visual representation):**
-
-![Protein Calculator Layout Example](https://user-images.githubusercontent.com/your-screenshot-link.png)
-
----
-
 **Features:**
 - Modern Bootstrap UI
 - Live calculation of daily and consumed protein
@@ -48,10 +42,3 @@
 
 ![Protein Calculator Layout Example](https://user-images.githubusercontent.com/your-screenshot-link.png)
 
----
-
-**Features:**
-- Modern Bootstrap UI
-- Live calculation of daily and consumed protein
-- Searchable food list
-- Responsive design
