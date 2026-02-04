@@ -148,3 +148,10 @@ body {
     border-collapse: separate !important;
     border-spacing: 0 0.35em !important;
 }
+#foodTable2-scrollable {
+    min-width: 600px;
+    max-width: 900px;
+}
+.container {
+    max-width: 1300px !important;
+}

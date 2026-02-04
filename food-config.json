@@ -1,0 +1,660 @@
+{
+  "chicken breast": {
+    "proteins": 31,
+    "carbohydrates": 0,
+    "fats": 3.6,
+    "amount": 100,
+    "unit": "g"
+  },
+  "egg": {
+    "proteins": 13,
+    "carbohydrates": 1.1,
+    "fats": 11,
+    "amount": 100,
+    "unit": "g"
+  },
+  "egg white": {
+    "proteins": 11,
+    "carbohydrates": 0.7,
+    "fats": 0.2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "egg yolk": {
+    "proteins": 16,
+    "carbohydrates": 3.6,
+    "fats": 27,
+    "amount": 100,
+    "unit": "g"
+  },
+  "rice (white)": {
+    "proteins": 2.7,
+    "carbohydrates": 28,
+    "fats": 0.3,
+    "amount": 100,
+    "unit": "g"
+  },
+  "brown rice": {
+    "proteins": 2.6,
+    "carbohydrates": 23,
+    "fats": 0.9,
+    "amount": 100,
+    "unit": "g"
+  },
+  "quinoa": {
+    "proteins": 4.4,
+    "carbohydrates": 21.3,
+    "fats": 1.9,
+    "amount": 100,
+    "unit": "g"
+  },
+  "oats": {
+    "proteins": 13.2,
+    "carbohydrates": 68,
+    "fats": 6.5,
+    "amount": 100,
+    "unit": "g"
+  },
+  "whey protein": {
+    "proteins": 80,
+    "carbohydrates": 8,
+    "fats": 3,
+    "amount": 100,
+    "unit": "g"
+  },
+  "casein protein": {
+    "proteins": 76,
+    "carbohydrates": 10,
+    "fats": 1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "salmon": {
+    "proteins": 20,
+    "carbohydrates": 0,
+    "fats": 13,
+    "amount": 100,
+    "unit": "g"
+  },
+  "tuna": {
+    "proteins": 25,
+    "carbohydrates": 0,
+    "fats": 1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "beef (lean)": {
+    "proteins": 26,
+    "carbohydrates": 0,
+    "fats": 10,
+    "amount": 100,
+    "unit": "g"
+  },
+  "ground beef (85%)": {
+    "proteins": 26,
+    "carbohydrates": 0,
+    "fats": 15,
+    "amount": 100,
+    "unit": "g"
+  },
+  "turkey breast": {
+    "proteins": 29,
+    "carbohydrates": 0,
+    "fats": 1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "pork loin": {
+    "proteins": 22,
+    "carbohydrates": 0,
+    "fats": 6,
+    "amount": 100,
+    "unit": "g"
+  },
+  "ham": {
+    "proteins": 18,
+    "carbohydrates": 1.5,
+    "fats": 5,
+    "amount": 100,
+    "unit": "g"
+  },
+  "duck (meat only)": {
+    "proteins": 27,
+    "carbohydrates": 0,
+    "fats": 7,
+    "amount": 100,
+    "unit": "g"
+  },
+  "tilapia": {
+    "proteins": 26,
+    "carbohydrates": 0,
+    "fats": 2.7,
+    "amount": 100,
+    "unit": "g"
+  },
+  "shrimp": {
+    "proteins": 24,
+    "carbohydrates": 0.2,
+    "fats": 0.3,
+    "amount": 100,
+    "unit": "g"
+  },
+  "sardines": {
+    "proteins": 25,
+    "carbohydrates": 0,
+    "fats": 11,
+    "amount": 100,
+    "unit": "g"
+  },
+  "cod": {
+    "proteins": 18,
+    "carbohydrates": 0,
+    "fats": 0.7,
+    "amount": 100,
+    "unit": "g"
+  },
+  "mackerel": {
+    "proteins": 20,
+    "carbohydrates": 0,
+    "fats": 13.9,
+    "amount": 100,
+    "unit": "g"
+  },
+  "tofu (firm)": {
+    "proteins": 8,
+    "carbohydrates": 1.9,
+    "fats": 4.8,
+    "amount": 100,
+    "unit": "g"
+  },
+  "tempeh": {
+    "proteins": 19,
+    "carbohydrates": 9.4,
+    "fats": 10.8,
+    "amount": 100,
+    "unit": "g"
+  },
+  "edamame": {
+    "proteins": 11,
+    "carbohydrates": 8.9,
+    "fats": 5.2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "lentils (cooked)": {
+    "proteins": 9,
+    "carbohydrates": 20,
+    "fats": 0.4,
+    "amount": 100,
+    "unit": "g"
+  },
+  "chickpeas (cooked)": {
+    "proteins": 8.9,
+    "carbohydrates": 27.4,
+    "fats": 2.6,
+    "amount": 100,
+    "unit": "g"
+  },
+  "black beans (cooked)": {
+    "proteins": 8.9,
+    "carbohydrates": 23.7,
+    "fats": 0.5,
+    "amount": 100,
+    "unit": "g"
+  },
+  "kidney beans (cooked)": {
+    "proteins": 8.7,
+    "carbohydrates": 22.8,
+    "fats": 0.5,
+    "amount": 100,
+    "unit": "g"
+  },
+  "green peas": {
+    "proteins": 5,
+    "carbohydrates": 14,
+    "fats": 0.4,
+    "amount": 100,
+    "unit": "g"
+  },
+  "soy milk": {
+    "proteins": 3.3,
+    "carbohydrates": 4.7,
+    "fats": 1.8,
+    "amount": 100,
+    "unit": "g"
+  },
+  "milk (whole)": {
+    "proteins": 3.4,
+    "carbohydrates": 4.8,
+    "fats": 3.7,
+    "amount": 100,
+    "unit": "g"
+  },
+  "milk (skim)": {
+    "proteins": 3.6,
+    "carbohydrates": 5,
+    "fats": 0.1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "greek yogurt (non-fat)": {
+    "proteins": 10,
+    "carbohydrates": 3.6,
+    "fats": 0.4,
+    "amount": 100,
+    "unit": "g"
+  },
+  "regular yogurt": {
+    "proteins": 5,
+    "carbohydrates": 7,
+    "fats": 2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "cottage cheese (low-fat)": {
+    "proteins": 11,
+    "carbohydrates": 3.4,
+    "fats": 1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "cheddar cheese": {
+    "proteins": 25,
+    "carbohydrates": 1.3,
+    "fats": 33,
+    "amount": 100,
+    "unit": "g"
+  },
+  "mozzarella": {
+    "proteins": 22,
+    "carbohydrates": 2.2,
+    "fats": 22,
+    "amount": 100,
+    "unit": "g"
+  },
+  "parmesan": {
+    "proteins": 35,
+    "carbohydrates": 3.2,
+    "fats": 25,
+    "amount": 100,
+    "unit": "g"
+  },
+  "almonds": {
+    "proteins": 21,
+    "carbohydrates": 22,
+    "fats": 49,
+    "amount": 100,
+    "unit": "g"
+  },
+  "peanuts": {
+    "proteins": 25.8,
+    "carbohydrates": 16.1,
+    "fats": 49.2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "peanut butter": {
+    "proteins": 25,
+    "carbohydrates": 20,
+    "fats": 50,
+    "amount": 100,
+    "unit": "g"
+  },
+  "cashews": {
+    "proteins": 18,
+    "carbohydrates": 30,
+    "fats": 44,
+    "amount": 100,
+    "unit": "g"
+  },
+  "walnuts": {
+    "proteins": 15,
+    "carbohydrates": 14,
+    "fats": 65,
+    "amount": 100,
+    "unit": "g"
+  },
+  "pistachios": {
+    "proteins": 20,
+    "carbohydrates": 28,
+    "fats": 45,
+    "amount": 100,
+    "unit": "g"
+  },
+  "hazelnuts": {
+    "proteins": 15,
+    "carbohydrates": 17,
+    "fats": 61,
+    "amount": 100,
+    "unit": "g"
+  },
+  "chia seeds": {
+    "proteins": 17,
+    "carbohydrates": 42,
+    "fats": 31,
+    "amount": 100,
+    "unit": "g"
+  },
+  "flax seeds": {
+    "proteins": 18,
+    "carbohydrates": 29,
+    "fats": 42,
+    "amount": 100,
+    "unit": "g"
+  },
+  "sunflower seeds": {
+    "proteins": 21,
+    "carbohydrates": 20,
+    "fats": 51,
+    "amount": 100,
+    "unit": "g"
+  },
+  "pumpkin seeds": {
+    "proteins": 19,
+    "carbohydrates": 54,
+    "fats": 19,
+    "amount": 100,
+    "unit": "g"
+  },
+  "hemp seeds": {
+    "proteins": 31,
+    "carbohydrates": 9,
+    "fats": 49,
+    "amount": 100,
+    "unit": "g"
+  },
+  "bread (whole wheat)": {
+    "proteins": 9,
+    "carbohydrates": 49,
+    "fats": 3.2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "bread (white)": {
+    "proteins": 7,
+    "carbohydrates": 49,
+    "fats": 3.2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "bagel (plain)": {
+    "proteins": 9.8,
+    "carbohydrates": 53,
+    "fats": 1.7,
+    "amount": 100,
+    "unit": "g"
+  },
+  "tortilla (flour)": {
+    "proteins": 7.9,
+    "carbohydrates": 49,
+    "fats": 3.2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "pasta (cooked)": {
+    "proteins": 5,
+    "carbohydrates": 25,
+    "fats": 1.1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "pasta (whole wheat, cooked)": {
+    "proteins": 7.5,
+    "carbohydrates": 27,
+    "fats": 1.3,
+    "amount": 100,
+    "unit": "g"
+  },
+  "sweet potato (cooked)": {
+    "proteins": 1.6,
+    "carbohydrates": 20,
+    "fats": 0.1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "potato (boiled)": {
+    "proteins": 2,
+    "carbohydrates": 17,
+    "fats": 0.1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "broccoli (cooked)": {
+    "proteins": 2.8,
+    "carbohydrates": 7,
+    "fats": 0.4,
+    "amount": 100,
+    "unit": "g"
+  },
+  "spinach (cooked)": {
+    "proteins": 3,
+    "carbohydrates": 3.8,
+    "fats": 0.4,
+    "amount": 100,
+    "unit": "g"
+  },
+  "kale": {
+    "proteins": 4.3,
+    "carbohydrates": 9,
+    "fats": 1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "asparagus": {
+    "proteins": 2.2,
+    "carbohydrates": 3.9,
+    "fats": 0.2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "zucchini": {
+    "proteins": 1.2,
+    "carbohydrates": 3.1,
+    "fats": 0.3,
+    "amount": 100,
+    "unit": "g"
+  },
+  "mushrooms": {
+    "proteins": 3.1,
+    "carbohydrates": 3.3,
+    "fats": 0.3,
+    "amount": 100,
+    "unit": "g"
+  },
+  "brussels sprouts": {
+    "proteins": 3.4,
+    "carbohydrates": 9,
+    "fats": 0.5,
+    "amount": 100,
+    "unit": "g"
+  },
+  "cauliflower": {
+    "proteins": 1.9,
+    "carbohydrates": 5,
+    "fats": 0.3,
+    "amount": 100,
+    "unit": "g"
+  },
+  "avocado": {
+    "proteins": 2,
+    "carbohydrates": 9,
+    "fats": 15,
+    "amount": 100,
+    "unit": "g"
+  },
+  "banana": {
+    "proteins": 1.1,
+    "carbohydrates": 23,
+    "fats": 0.3,
+    "amount": 100,
+    "unit": "g"
+  },
+  "apple": {
+    "proteins": 0.3,
+    "carbohydrates": 14,
+    "fats": 0.2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "orange": {
+    "proteins": 0.9,
+    "carbohydrates": 12,
+    "fats": 0.1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "blueberries": {
+    "proteins": 0.7,
+    "carbohydrates": 14,
+    "fats": 0.3,
+    "amount": 100,
+    "unit": "g"
+  },
+  "strawberries": {
+    "proteins": 0.8,
+    "carbohydrates": 8,
+    "fats": 0.4,
+    "amount": 100,
+    "unit": "g"
+  },
+  "grapes": {
+    "proteins": 0.6,
+    "carbohydrates": 17,
+    "fats": 0.2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "pineapple": {
+    "proteins": 0.5,
+    "carbohydrates": 13,
+    "fats": 0.1,
+    "amount": 100,
+    "unit": "g"
+  },
+  "mango": {
+    "proteins": 0.8,
+    "carbohydrates": 15,
+    "fats": 0.4,
+    "amount": 100,
+    "unit": "g"
+  },
+  "dates": {
+    "proteins": 2,
+    "carbohydrates": 75,
+    "fats": 0.2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "raisins": {
+    "proteins": 3.1,
+    "carbohydrates": 79,
+    "fats": 0.5,
+    "amount": 100,
+    "unit": "g"
+  },
+  "coconut (meat)": {
+    "proteins": 3.3,
+    "carbohydrates": 15,
+    "fats": 33,
+    "amount": 100,
+    "unit": "g"
+  },
+  "coconut water": {
+    "proteins": 0.7,
+    "carbohydrates": 3.7,
+    "fats": 0,
+    "amount": 100,
+    "unit": "g"
+  },
+  "beef jerky": {
+    "proteins": 33,
+    "carbohydrates": 10,
+    "fats": 2.6,
+    "amount": 100,
+    "unit": "g"
+  },
+  "seitan": {
+    "proteins": 21,
+    "carbohydrates": 14,
+    "fats": 2,
+    "amount": 100,
+    "unit": "g"
+  },
+  "spirulina": {
+    "proteins": 57,
+    "carbohydrates": 23.9,
+    "fats": 7.7,
+    "amount": 100,
+    "unit": "g"
+  },
+  "nutritional yeast": {
+    "proteins": 50,
+    "carbohydrates": 34,
+    "fats": 4,
+    "amount": 100,
+    "unit": "g"
+  },
+  "collagen powder": {
+    "proteins": 90,
+    "carbohydrates": 0,
+    "fats": 0,
+    "amount": 100,
+    "unit": "g"
+  },
+  "bacon": {
+    "proteins": 37,
+    "carbohydrates": 1.4,
+    "fats": 42,
+    "amount": 100,
+    "unit": "g"
+  },
+  "sausage (pork)": {
+    "proteins": 14,
+    "carbohydrates": 1.6,
+    "fats": 30,
+    "amount": 100,
+    "unit": "g"
+  },
+  "duck egg": {
+    "proteins": 13,
+    "carbohydrates": 1.4,
+    "fats": 13,
+    "amount": 100,
+    "unit": "g"
+  },
+  "venison": {
+    "proteins": 30,
+    "carbohydrates": 0,
+    "fats": 3,
+    "amount": 100,
+    "unit": "g"
+  },
+  "lamb": {
+    "proteins": 25,
+    "carbohydrates": 0,
+    "fats": 21,
+    "amount": 100,
+    "unit": "g"
+  },
+  "bison": {
+    "proteins": 28,
+    "carbohydrates": 0,
+    "fats": 2.4,
+    "amount": 100,
+    "unit": "g"
+  },
+  "rabbit": {
+    "proteins": 21,
+    "carbohydrates": 0,
+    "fats": 3.5,
+    "amount": 100,
+    "unit": "g"
+  },
+  "goat cheese": {
+    "proteins": 22,
+    "carbohydrates": 2,
+    "fats": 29,
+    "amount": 100,
+    "unit": "g"
+  }
+}

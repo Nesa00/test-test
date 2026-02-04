@@ -1,4 +1,3 @@
-
 // Load activity levels config from JSON file
 let activityLevelsConfig = null;
 let config = {};
@@ -51,9 +50,16 @@ let selectedFoods = [];
 
 async function loadConfigs() {
     // Load foods
-    const foodResp = await fetch('protein-config.json');
+    const foodResp = await fetch('food-config.json');
     const foodObj = await foodResp.json();
-    foodList = Object.entries(foodObj).map(([name, protein]) => ({ name, protein: parseFloat(protein) }));
+    foodList = Object.entries(foodObj).map(([name, obj]) => ({
+        name,
+        proteins: parseFloat(obj.proteins),
+        carbohydrates: parseFloat(obj.carbohydrates),
+        fats: parseFloat(obj.fats),
+        amount: parseFloat(obj.amount),
+        unit: obj.unit
+    }));
     // Load activity levels
     const actResp = await fetch('activity-level-config.json');
     activityLevels = await actResp.json();
@@ -153,15 +159,20 @@ function populateFoodList() {
             tr.style.cursor = 'pointer';
             tr.innerHTML = `
                 <td>${food.name}</td>
-                <td>${food.protein}</td>
+                <td>${food.proteins}</td>
+                <td>${food.carbohydrates}</td>
+                <td>${food.fats}</td>
             `;
             tr.addEventListener('click', function() {
                 const alreadySelected = selectedFoods.some(f => f.name === food.name);
                 if (!alreadySelected) {
                     selectedFoods.push({
                         name: food.name,
-                        consumed: 100,
-                        protein: (food.protein).toFixed(2)
+                        consumed: food.amount,
+                        proteins: ((food.proteins * food.amount) / 100).toFixed(2),
+                        carbohydrates: ((food.carbohydrates * food.amount) / 100).toFixed(2),
+                        fats: ((food.fats * food.amount) / 100).toFixed(2),
+                        unit: food.unit
                     });
                 } else {
                     selectedFoods = selectedFoods.filter(f => f.name !== food.name);
@@ -179,14 +190,18 @@ function populateSelectedFoods() {
     const tbody = document.querySelector('#selectedFoodsTable2 tbody');
     if (!tbody) return;
     tbody.innerHTML = '';
-    let totalProtein = 0;
+    let totalProteins = 0, totalCarbs = 0, totalFats = 0;
     selectedFoods.forEach((food, i) => {
-        totalProtein += parseFloat(food.protein) || 0;
+        totalProteins += parseFloat(food.proteins) || 0;
+        totalCarbs += parseFloat(food.carbohydrates) || 0;
+        totalFats += parseFloat(food.fats) || 0;
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${food.name}</td>
             <td><input type="number" class="form-control form-control-sm" value="${food.consumed}" data-index="${i}"></td>
-            <td class="selected-protein">${food.protein}</td>
+            <td class="selected-proteins">${food.proteins}</td>
+            <td class="selected-carbohydrates">${food.carbohydrates}</td>
+            <td class="selected-fats">${food.fats}</td>
             <td><button type="button" class="btn btn-sm btn-outline-danger" data-index="${i}">✕</button></td>
         `;
         tbody.appendChild(tr);
@@ -208,31 +223,37 @@ function populateSelectedFoods() {
             let val = parseFloat(this.value);
             if (isNaN(val) || val < 0) val = 0;
             selectedFoods[idx].consumed = val;
-            // Update protein value
-            const baseProtein = foodList.find(f => f.name === selectedFoods[idx].name).protein;
-            selectedFoods[idx].protein = ((val * baseProtein) / 100).toFixed(2);
-            // Only update the protein cell and total, not the whole table
-            this.closest('tr').querySelector('.selected-protein').textContent = selectedFoods[idx].protein;
-            // Update total protein display (bottom)
-            let totalProtein = 0;
-            selectedFoods.forEach(f => { totalProtein += parseFloat(f.protein) || 0; });
+            // Update values
+            const baseFood = foodList.find(f => f.name === selectedFoods[idx].name);
+            selectedFoods[idx].proteins = ((val * baseFood.proteins) / 100).toFixed(2);
+            selectedFoods[idx].carbohydrates = ((val * baseFood.carbohydrates) / 100).toFixed(2);
+            selectedFoods[idx].fats = ((val * baseFood.fats) / 100).toFixed(2);
+            // Update cells
+            this.closest('tr').querySelector('.selected-proteins').textContent = selectedFoods[idx].proteins;
+            this.closest('tr').querySelector('.selected-carbohydrates').textContent = selectedFoods[idx].carbohydrates;
+            this.closest('tr').querySelector('.selected-fats').textContent = selectedFoods[idx].fats;
+            // Update totals
+            let totalProteins = 0, totalCarbs = 0, totalFats = 0;
+            selectedFoods.forEach(f => {
+                totalProteins += parseFloat(f.proteins) || 0;
+                totalCarbs += parseFloat(f.carbohydrates) || 0;
+                totalFats += parseFloat(f.fats) || 0;
+            });
             const totalProteinSpan = document.querySelector('.mt-3.fw-bold.text-end .text-success');
             if (totalProteinSpan) {
-                totalProteinSpan.textContent = totalProtein.toFixed(2) + ' g';
+                totalProteinSpan.textContent = totalProteins.toFixed(2) + ' g';
             }
             // Update consumed protein label in summary card (top) and badge color
             const consumedBadge = document.getElementById('consumed-protein-badge');
             const requiredBadge = document.getElementById('required-protein-badge');
             let requiredProteinValue = 0;
             if (requiredBadge) {
-                // Extract the numeric value from the required badge (e.g., '90.00 g/day')
                 const match = requiredBadge.textContent.match(/([\d.]+)/);
                 if (match) requiredProteinValue = parseFloat(match[1]);
             }
             if (consumedBadge) {
-                consumedBadge.textContent = totalProtein.toFixed(2) + ' g/day';
-                // Change badge color: yellow if below goal, green if met/exceeded
-                if (totalProtein >= requiredProteinValue && requiredProteinValue > 0) {
+                consumedBadge.textContent = totalProteins.toFixed(2) + ' g/day';
+                if (totalProteins >= requiredProteinValue && requiredProteinValue > 0) {
                     consumedBadge.classList.remove('bg-warning');
                     consumedBadge.classList.add('bg-success');
                 } else {
@@ -246,7 +267,7 @@ function populateSelectedFoods() {
     // Update total protein display (bottom)
     const totalProteinSpan = document.querySelector('.mt-3.fw-bold.text-end .text-success');
     if (totalProteinSpan) {
-        totalProteinSpan.textContent = totalProtein.toFixed(2) + ' g';
+        totalProteinSpan.textContent = totalProteins.toFixed(2) + ' g';
     }
     // Update consumed protein label in summary card (top) and badge color
     const consumedBadge = document.getElementById('consumed-protein-badge');
@@ -257,8 +278,8 @@ function populateSelectedFoods() {
         if (match) requiredProteinValue = parseFloat(match[1]);
     }
     if (consumedBadge) {
-        consumedBadge.textContent = totalProtein.toFixed(2) + ' g/day';
-        if (totalProtein >= requiredProteinValue && requiredProteinValue > 0) {
+        consumedBadge.textContent = totalProteins.toFixed(2) + ' g/day';
+        if (totalProteins >= requiredProteinValue && requiredProteinValue > 0) {
             consumedBadge.classList.remove('bg-warning');
             consumedBadge.classList.add('bg-success');
         } else {
