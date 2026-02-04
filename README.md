@@ -1,3 +1,4 @@
+[![Deploy static content to Pages](https://github.com/Nesa00/protein-calculator/actions/workflows/static.yml/badge.svg)](https://github.com/Nesa00/protein-calculator/actions/workflows/static.yml) 
 
 # Protein Calculator
 
